@@ -1,6 +1,20 @@
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path,include
-from .views import ViewBoards,AddBoard, BoardContent,AddList,EditBoard,AddCard,EditCard,EditList,DeleteCard,DeleteList,DeleteBoard
+from django.conf.urls import url
+from django.contrib.auth.views import PasswordResetView
+
+from .views import (ViewBoards,
+                    AddBoard, 
+                    BoardContent,
+                    AddList,EditBoard,
+                    AddCard,
+                    EditCard,
+                    EditList,
+                    DeleteCard,
+                    DeleteList,
+                    DeleteBoard,
+                    SignUp)
 
 urlpatterns = [
     path('', ViewBoards.as_view(), name="viewBoards"),
@@ -11,9 +25,11 @@ urlpatterns = [
     path('board/<int:board_id>/list/new', AddList.as_view(), name="addList"),
     path('board/<int:board_id>/<int:list_id>/edit', EditList.as_view(), name="editList"),
     path('board/<int:board_id>/<int:list_id>/delete', DeleteList.as_view(), name="deleteList"),
-    
     path('board/<int:board_id>/<int:list_id>/add', AddCard.as_view(), name="addCard"),
     path('board/<int:board_id>/<int:list_id>/<int:card_id>/edit', EditCard.as_view(), name="editCard"),
     path('board/<int:board_id>/<int:list_id>/<int:card_id>/delete', DeleteCard.as_view(), name="deleteCard"),
+    
+    path('accounts/signup/', SignUp.as_view(), name='signUp'),
+    path('accounts/password_reset/', PasswordResetView.as_view(), name='passwordReset'),
     
 ]

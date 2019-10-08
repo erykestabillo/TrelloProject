@@ -1,0 +1,22 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: TestSite password reset
+From: webmaster@localhost
+To: erykestabillo@gmail.com
+Date: Tue, 08 Oct 2019 11:32:26 -0000
+Message-ID: <157053434643.16133.5709412300504781164@cjdango-pc>
+
+
+To initiate the password reset process for your erykestabillo@gmail.com TestSite Account,
+click the link below:
+
+http://127.0.0.1:8000/accounts/reset/MQ/5ae-d86acde9496297e8a9aa/
+
+If clicking the link above doesn't work, please copy and paste the URL in a new browser
+window instead.
+
+Sincerely,
+The TestSite Team
+
+-------------------------------------------------------------------------------

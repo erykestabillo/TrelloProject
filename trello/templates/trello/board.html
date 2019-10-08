@@ -1,0 +1,33 @@
+{% extends 'trello/base.html' %}
+
+{% block content %}
+<div class="container">
+            
+    <br><br><p><a class="far fa-plus-square" href="{% url 'addList' board_id=board.id %}">   Add List</a></p>
+  
+
+  <div class="row">
+      
+          <div class="col-sm-3">
+              
+                  {% for list in board_lists %} 
+                  <ul class="list-group "> <li class="list-group-item list-group-item-dark">{{ list }}  <a class="far fa-edit" href="{% url 'editList' board_id=board.id list_id=list.id %}"></a><a class="far fa-trash-alt" href="{% url 'deleteList' board_id=board.id list_id=list.id %}"></span></a></li>
+                      {% for card in list_cards %}
+                          {% if card.board_list.id == list.id %}
+                              <li class="list-group-item">{{ card }}  <a class="far fa-edit" href="{% url 'editCard' board_id=board.id list_id=list.id card_id=card.id %}"></a>  <a class="far fa-trash-alt" href="{% url 'deleteCard' board_id=board.id list_id=list.id card_id=card.id %}"></a></li>
+                          {% endif %}
+      
+                      {% endfor %}
+                     <a class="list-group-item far fa-plus-square" href="{% url 'addCard' board_id=board.id list_id=list.id %}">   Add Card</a>
+                  </ul><br>
+                  {% endfor %}
+          </div>
+  </div>
+  
+</div>
+
+
+{% endblock %}
+          
+        
+
