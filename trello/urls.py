@@ -14,7 +14,8 @@ from .views import (ViewBoards,
                     DeleteCard,
                     DeleteList,
                     DeleteBoard,
-                    SignUp)
+                    SignUp,
+                    AddBoards,)
 
 urlpatterns = [
     path('', ViewBoards.as_view(), name="viewBoards"),
@@ -31,5 +32,7 @@ urlpatterns = [
     
     path('accounts/signup/', SignUp.as_view(), name='signUp'),
     path('accounts/password_reset/', PasswordResetView.as_view(), name='passwordReset'),
+
+     path('board/new/ajax/', AddBoards.as_view(), name="addBoards"),
     
 ]

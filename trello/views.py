@@ -9,6 +9,8 @@ from .models import Board
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse,reverse_lazy
 from django.views import generic
+from django.http import JsonResponse
+from django.views.generic.base import View
 
 # Create your views here.
 class ViewBoards(LoginRequiredMixin,TemplateView):
@@ -43,6 +45,15 @@ class AddBoard(LoginRequiredMixin,TemplateView):
 
         return render(request,self.template_name,{'form':form})
 
+
+class AddBoards(View):
+    template_name = "trello/board_new.html"
+    login_url = '/accounts/login/'
+    form = BoardForm
+
+    def get(self,request):
+        form = self.form()
+        return JsonResponse({})
 
 class EditBoard(LoginRequiredMixin,TemplateView):
     template_name = "trello/board_new.html"
