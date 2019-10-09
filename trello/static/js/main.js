@@ -1,22 +1,176 @@
 $(document).ready(function () {
 
-   // $(document).on('click','#create-board',)
-
     $('#board-modal').on('shown.bs.modal', function(event) {
-       var remoteUrl =  $(event.relatedTarget).data('remote')
+       var remoteUrl =  $(event.relatedTarget).data('remote') 
        var modal = $(this)
-        console.log(remoteUrl, 'test')
        $.ajax({
             method: 'GET',
             url: remoteUrl
        }).done(function(response){
-        console.log(response, 'testrespon')
         modal.find('.modal-body').html(response)
        })
       })
 
+      $(document).on('submit','#board_new_form', function(event){
+         event.preventDefault()
+         var action = $(this).attr('action')
+         var board_data = $(this).serialize()
+         
+         $.ajax({
+            method: 'POST',
+            url: action,
+            data: board_data
+         }).done(function(response){
+            window.location.href ='' 
+            
+         })
+      })
+
+      
+
+
+
+
+      $('#board-edit-modal').on('shown.bs.modal', function(event) {
+         var remoteUrl =  $(event.relatedTarget).data('remote') 
+         
+         var modal = $(this)
+         $.ajax({
+              method: 'GET',
+              url: remoteUrl
+         }).done(function(response){
+          modal.find('.modal-body').html(response)
+         
+
+         })
+        })
+
+
+        $(document).on('submit','#board_edit_form', function(event){
+         event.preventDefault()
+         var action = $(this).attr('action')
+         var board_data = $(this).serialize()
+         console.log(board_data,"hello")
+         $.ajax({
+            method: 'POST',
+            url: action,
+            data: board_data
+         }).done(function(response){
+            window.location.href ='' 
+         }).fail(function(response){
+            var error_template = '<br><ul><li>This Field is required</li></ul>';
+            $('.error-edit-board').html(error_template)
+         })
+      })
+
+
+
+      $('#list-add-modal').on('show.bs.modal', function(event){
+         var remoteUrl = $(event.relatedTarget).data('remote')
+         var modal = $(this)
+         $.ajax({
+            method: 'GET',
+            url: remoteUrl
+
+         }).done(function(response){
+            modal.find('.modal-body').html(response)
+         })
+      })
+
+      $(document).on('submit','#list-add-modal', function(event){
+         event.preventDefault()
+         var action = $('#add_list_form').attr('action')
+         var list_add_data = $('#add_list_form').serialize()
+         var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+         $.ajax({
+            method: 'POST',
+            url: action,
+            data: list_add_data,
+            headers:{
+               'X-CSRFToken':csrf
+           }
+         }).done(function(response){
+            window.location.href ='' 
+         })
+      })
+
+
 
 
       
+
+
+
+      $('#list-edit-modal').on('show.bs.modal', function(event){
+         var remoteUrl = $(event.relatedTarget).data('remote')
+         var modal = $(this)
+         
+         $.ajax({
+            method: 'GET',
+            url: remoteUrl
+
+         }).done(function(response){
+            
+            modal.find('.modal-body').html(response)
+         })
+      })
+      
+      
+      $(document).on('submit','#list-edit-modal', function(event){
+         event.preventDefault()
+         var action = $('#edit-list-form').attr('action')
+         var list_edit_data = $('#edit-list-form').serialize()
+         var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+         $.ajax({
+            method: 'POST',
+            url: action,
+            data: list_edit_data,
+            headers:{
+               'X-CSRFToken':csrf
+           }
+         }).done(function(response){
+            window.location.href ='' 
+         })
+      })
+
+
+
+
+      $('#card-add-modal').on('show.bs.modal', function(event){
+         var remoteUrl = $(event.relatedTarget).data('remote')
+         var modal = $(this)
+         
+         $.ajax({
+            method: 'GET',
+            url: remoteUrl
+
+         }).done(function(response){
+            
+            modal.find('.modal-body').html(response)
+         })
+      })
+
+      $(document).on('submit','#card-add-modal', function(event){
+         
+
+         var action = $('#add_card_form').attr('action')
+         var add_card_data = $('#add_card_form').serialize()
+         var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+         console.log(add_card_data,"data")
+         event.preventDefault()
+         $.ajax({
+            method: 'POST',
+            url: action,
+            data: add_card_data,
+            headers:{
+               'X-CSRFToken':csrf
+           }
+         }).done(function(response){
+            console.log(response,"res")
+            window.location.href ='' 
+            
+         })
+      })
+
 
 });

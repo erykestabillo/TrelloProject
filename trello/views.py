@@ -32,38 +32,27 @@ class AddBoard(LoginRequiredMixin,TemplateView):
         form = self.form()
         return render(request, self.template_name, {'form':form})
     
-    def post(self,request):
+
+
+
+class AddBoardAjax(TemplateView):
+    template_name = "trello/board_new.html"
+    form = BoardForm
+
+    def post(self,request, **kwargs):
         form = self.form(request.POST)
+        import pdb; pdb.set_trace()
         if form.is_valid():
             board_form = form.save(commit=False)
             board_form.user = request.user
-            board_form.date_created = timezone.now()
             board_form.save()
-            form.save_m2m()
-            return redirect('viewBoards')
-            #import pdb; pdb.set_trace()
-
-        return render(request,self.template_name,{'form':form})
+            return JsonResponse({})
+        return JsonResponse({}, status=400)
 
 
-class AddBoards(View):
-    template_name = "trello/board_new.html"
-    login_url = '/accounts/login/'
+class EditBoardAjax(TemplateView):
+    template_name = "trello/board_edit.html"
     form = BoardForm
-
-    def get(self,request):
-        form = self.form()
-        return JsonResponse({})
-
-class EditBoard(LoginRequiredMixin,TemplateView):
-    template_name = "trello/board_new.html"
-    login_url = '/accounts/login/'
-    form = BoardForm
-
-    def get(self,request,**kwargs):
-        board = get_object_or_404(Board,id=kwargs.get("board_id"))
-        form = self.form(instance=board)
-        return render(request, self.template_name, {'form':form})
     
     def post(self,request,**kwargs):
         board = get_object_or_404(Board,id=kwargs.get("board_id"))
@@ -72,10 +61,23 @@ class EditBoard(LoginRequiredMixin,TemplateView):
             board_form = form.save(commit=False)
             board_form.user = request.user
             board_form.save()
-            return redirect('boardContent', board_id=board.id)
-            #import pdb; pdb.set_trace()
+            return JsonResponse({'board_form':board_form.title})
+        return JsonResponse({}, status=400)
 
-        return render(request,self.template_name,{'form':form})
+
+
+
+class EditBoard(LoginRequiredMixin,TemplateView):
+    template_name = "trello/board_edit.html"
+    login_url = '/accounts/login/'
+    form = BoardForm
+
+    def get(self,request,**kwargs):
+        board = get_object_or_404(Board,id=kwargs.get("board_id"))
+        form = self.form(instance=board)
+        return render(request, self.template_name, {'form':form,'board_id':board.id})
+    
+    
 
 
 
@@ -103,14 +105,9 @@ class BoardContent(LoginRequiredMixin,TemplateView):
         return render(request,self.template_name, {'board':board,'board_lists':board_lists,'list_cards':list_cards,})
 
 
-class AddList(LoginRequiredMixin,TemplateView):
+class AddListAjax(TemplateView):
     template_name = "trello/add_list.html"
-    login_url = '/accounts/login/'
     form = ListForm
-
-    def get(self,request,**kwargs):
-        form = self.form()
-        return render(request, self.template_name, {'form':form})
     
     def post(self,request,**kwargs):
         board = get_object_or_404(Board,id=kwargs.get("board_id"))
@@ -119,21 +116,42 @@ class AddList(LoginRequiredMixin,TemplateView):
             board_form = form.save(commit=False)
             board_form.board = board
             board_form.save()
-            
-            return redirect('boardContent', board_id=board.id)
-
-        return render(request,self.template_name,{'form':form})
+            return JsonResponse({'board_form':board_form.title})
+        return JsonResponse({}, status=400)
 
 
-class EditList(LoginRequiredMixin,TemplateView):
+class AddList(LoginRequiredMixin,TemplateView):
     template_name = "trello/add_list.html"
     login_url = '/accounts/login/'
     form = ListForm
 
     def get(self,request,**kwargs):
+        board = get_object_or_404(Board,id=kwargs.get("board_id"))
+        form = self.form()
+        return render(request, self.template_name, {'form':form,'board_id':board.id})
+    
+    
+
+
+class EditList(LoginRequiredMixin,TemplateView):
+    template_name = "trello/edit_list.html"
+    login_url = '/accounts/login/'
+    form = ListForm
+    
+    def get(self,request,**kwargs):
         board_list = get_object_or_404(BoardList,id=kwargs.get("list_id"))
+        board = get_object_or_404(Board,id=kwargs.get("board_id"))
         form = self.form(instance=board_list)
-        return render(request, self.template_name, {'form':form})
+        
+        return render(request, self.template_name, {'form':form,'list_id':board_list.id,'board_id':board.id})
+
+
+    
+
+
+class EditListAjax(TemplateView):
+    template_name = "trello/edit_list.html"
+    form = ListForm
     
     def post(self,request,**kwargs):
         board_list = get_object_or_404(BoardList,id=kwargs.get("list_id"))
@@ -143,10 +161,8 @@ class EditList(LoginRequiredMixin,TemplateView):
             board_form = form.save(commit=False)
             board_form.board = board
             board_form.save()
-            
-            return redirect('boardContent', board_id=board.id)
-
-        return render(request,self.template_name,{'form':form})
+            return JsonResponse({})
+        return JsonResponse({}, status=400)
 
 
 class EditCard(LoginRequiredMixin,TemplateView):
@@ -159,18 +175,7 @@ class EditCard(LoginRequiredMixin,TemplateView):
         form = self.form(instance=card)
         return render(request, self.template_name, {'form':form})
     
-    def post(self,request,**kwargs):
-        card = get_object_or_404(ListCard,id=kwargs.get("card_id"))
-        board = get_object_or_404(Board,id=kwargs.get("board_id"))
-        form = self.form(request.POST,instance=card)
-        if form.is_valid():
-            board_form = form.save(commit=False)
-            board_form.user = request.user
-            board_form.save()
-            return redirect('boardContent', board_id=board.id)
-            #import pdb; pdb.set_trace()
 
-        return render(request,self.template_name,{'form':form})
 
 
 
@@ -179,22 +184,27 @@ class AddCard(LoginRequiredMixin,TemplateView):
     form = CardForm
 
     def get(self,request,**kwargs):
-        form = self.form()
-        return render(request, self.template_name, {'form':form})
-    
-    def post(self,request,**kwargs):
         board_list = get_object_or_404(BoardList,id=kwargs.get("list_id"))
         board = get_object_or_404(Board,id=kwargs.get("board_id"))
-        #import pdb; pdb.set_trace()
+        form = self.form()
+        return render(request, self.template_name, {'form':form,'board_id':board.id,'list_id':board_list.id})
+    
+
+class AddCardAjax(TemplateView):
+    template_name = "trello/add_card.html"
+    form = CardForm
+
+    def post(self,request,**kwargs):
+        board_list = get_object_or_404(BoardList,id=kwargs.get("list_id"))
         form = self.form(request.POST)
+        
         if form.is_valid():
             board_form = form.save(commit=False)
             board_form.board_list = board_list
             board_form.save()
-            
-            return redirect('boardContent', board_id=board.id)
-
-        return render(request,self.template_name,{'form':form})
+            return JsonResponse({})
+            import pdb; pdb.set_trace()
+        return JsonResponse({}, status=400)
 
 
 class DeleteCard(LoginRequiredMixin,TemplateView):

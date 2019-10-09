@@ -11,17 +11,16 @@
             <div class="container">
                     <div class="row justify-content-center">
                            
-                            <div class="col-sm5">
-                                
-                                <form id="board_new_form" action="{% url 'addBoardAjax' %}" enctype="multipart/form-data" method="POST" novalidate> {% csrf_token %}
+                            <div class="col-sm4">
+
+                                <form id="board_edit_form" action="{% url 'editBoardAjax' board_id=board_id %}" enctype="multipart/form-data" method="POST" novalidate> {% csrf_token %}
                     
                                     {% for field in form %}
                                     <ul id="frms">
                                             {{ field|as_crispy_field }} {{ field.errors }}
                                     </ul>
-                    
+                                    <p class="error-edit-board"></p>
                                     {% endfor %}
-
                                     <br><button type="submit" style="background-color: darkblue" class="btn btn-success">Save</button>
                                 </form>
                             </div>

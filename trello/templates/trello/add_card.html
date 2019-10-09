@@ -11,9 +11,9 @@
             <div class="container">
                     <div class="row justify-content-center">
                            
-                            <div class="col-sm3">
-                                <br><br><br>
-                                <form enctype="multipart/form-data" method="POST" novalidate> {% csrf_token %}
+                            <div class="col-sm5">
+                                
+                                <form enctype="multipart/form-data" id="add_card_form" action="{% url 'addCardAjax' board_id=board_id list_id=list_id %}" method="POST" novalidate> {% csrf_token %}
                     
                                     {% for field in form %}
                                     <ul id="frms">
@@ -21,7 +21,7 @@
                                     </ul>
                     
                                     {% endfor %}
-                                    <button type="submit" class="btn btn-success"">Save</button>
+                                    <br><button type="submit" style="background-color: darkblue" class="btn btn-success">Save</button>
                                 </form>
                             </div>
                     </div>

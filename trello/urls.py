@@ -15,7 +15,11 @@ from .views import (ViewBoards,
                     DeleteList,
                     DeleteBoard,
                     SignUp,
-                    AddBoards,)
+                    AddBoardAjax,
+                    EditBoardAjax,
+                    AddListAjax,
+                    EditListAjax,
+                    AddCardAjax)
 
 urlpatterns = [
     path('', ViewBoards.as_view(), name="viewBoards"),
@@ -33,6 +37,11 @@ urlpatterns = [
     path('accounts/signup/', SignUp.as_view(), name='signUp'),
     path('accounts/password_reset/', PasswordResetView.as_view(), name='passwordReset'),
 
-     path('board/new/ajax/', AddBoards.as_view(), name="addBoards"),
+    path('board/new/ajax/', AddBoardAjax.as_view(), name="addBoardAjax"),
+    path('board/<int:board_id>/edit/ajax/', EditBoardAjax.as_view(), name="editBoardAjax"),
+    path('board/<int:board_id>/list/new/ajax/', AddListAjax.as_view(), name="addListAjax"),
+    path('board/<int:board_id>/<int:list_id>/edit/ajax/', EditListAjax.as_view(), name="editListAjax"),
+    path('board/<int:board_id>/<int:list_id>/add/ajax', AddCardAjax.as_view(), name="addCardAjax"),
+    
     
 ]

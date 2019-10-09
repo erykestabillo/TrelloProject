@@ -13,7 +13,7 @@
                            
                             <div class="col-sm5">
                                 
-                                <form id="board_new_form" action="{% url 'addBoardAjax' %}" enctype="multipart/form-data" method="POST" novalidate> {% csrf_token %}
+                                <form enctype="multipart/form-data" id="edit-list-form" action="{% url 'editListAjax' board_id=board_id list_id=list_id %}" method="POST" novalidate> {% csrf_token %}
                     
                                     {% for field in form %}
                                     <ul id="frms">
@@ -21,8 +21,7 @@
                                     </ul>
                     
                                     {% endfor %}
-
-                                    <br><button type="submit" style="background-color: darkblue" class="btn btn-success">Save</button>
+                                    <button type="submit" style="background-color: darkblue" class="btn btn-success">Save</button>
                                 </form>
                             </div>
                     </div>
