@@ -13,13 +13,13 @@
                            
                             <div class="col-sm5">
                                 
-                                <form enctype="multipart/form-data" id="add_card_form" action="{% url 'addCardAjax' board_id=board_id list_id=list_id %}" method="POST" novalidate> {% csrf_token %}
+                                <form enctype="multipart/form-data" id="edit_card_form" action="{% url 'editCardAjax' card_id=card_id board_id=board_id list_id=list_id %}" method="POST" novalidate> {% csrf_token %}
                     
                                     {% for field in form %}
                                     <ul id="frms">
                                               {{ field|as_crispy_field }} {{ field.errors }}
                                     </ul>
-                                    <p class="error-add-card"></p>
+                                    <p class="error-edit-card"></p>
                     
                                     {% endfor %}
                                     <br><button type="submit" style="background-color: darkblue" class="btn btn-success">Save</button>

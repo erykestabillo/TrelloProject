@@ -19,7 +19,12 @@ from .views import (ViewBoards,
                     EditBoardAjax,
                     AddListAjax,
                     EditListAjax,
-                    AddCardAjax)
+                    AddCardAjax,
+                    EditCardAjax,
+                    ArchiveCard,
+                    CardArchives,
+                    RestoreCard,
+                    ChangeCard)
 
 urlpatterns = [
     path('', ViewBoards.as_view(), name="viewBoards"),
@@ -32,7 +37,10 @@ urlpatterns = [
     path('board/<int:board_id>/<int:list_id>/delete', DeleteList.as_view(), name="deleteList"),
     path('board/<int:board_id>/<int:list_id>/add', AddCard.as_view(), name="addCard"),
     path('board/<int:board_id>/<int:list_id>/<int:card_id>/edit', EditCard.as_view(), name="editCard"),
-    path('board/<int:board_id>/<int:list_id>/<int:card_id>/delete', DeleteCard.as_view(), name="deleteCard"),
+    path('board/<int:board_id>/<int:card_id>/delete', DeleteCard.as_view(), name="deleteCard"),
+    path('board/<int:board_id>/<int:list_id>/<int:card_id>/archive', ArchiveCard.as_view(), name="archiveCard"),
+    path('board/<int:board_id>/archives/', CardArchives.as_view(), name="cardArchives"),
+    path('board/<int:board_id>/<int:card_id>/restore/', RestoreCard.as_view(), name="restoreArchivedCard"),
     
     path('accounts/signup/', SignUp.as_view(), name='signUp'),
     path('accounts/password_reset/', PasswordResetView.as_view(), name='passwordReset'),
@@ -42,6 +50,8 @@ urlpatterns = [
     path('board/<int:board_id>/list/new/ajax/', AddListAjax.as_view(), name="addListAjax"),
     path('board/<int:board_id>/<int:list_id>/edit/ajax/', EditListAjax.as_view(), name="editListAjax"),
     path('board/<int:board_id>/<int:list_id>/add/ajax', AddCardAjax.as_view(), name="addCardAjax"),
+    path('board/<int:board_id>/<int:list_id>/<int:card_id>/edit/ajax', EditCardAjax.as_view(), name="editCardAjax"),
+    path('board/<int:board_id>/<int:list_id>/<int:card_id>/edit/change', ChangeCard.as_view(), name="changeCard"),
     
     
 ]

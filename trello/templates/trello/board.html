@@ -3,12 +3,50 @@
 {% block content %}
 {% load static %}
 
+<!-- Button trigger modal -->
+<br><br>
+<button type="button"
+style="background-color: darkblue"
+class="btn btn-primary border-0 bg far fa-plus-square p-2 float-right mr-4 mt-n4"
+id="archived-cards" 
+data-toggle="modal" 
+data-remote="{% url 'cardArchives'  board_id=board.id %}"
+data-target="#archived-cards-modal">
+Archived Cards
+</button>
+
+
+<!-- Modal -->
+<div class="modal fade" id="archived-cards-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalCenterTitle">Archived Cards</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <div class="modal-body">
+    
+    </div>
+    <div class="modal-footer">
+    
+    </div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
 <div class="container">
-            
+    
     <!-- <p><a class="far fa-plus-square" href="{% url 'addList' board_id=board.id %}">   Add List</a></p> -->
     
 
-    <!-- Button trigger modal -->
+    <!-- Button trigger modal add list -->
     <br><br>
     <button type="button"
     style="background-color: darkblue"
@@ -21,7 +59,7 @@
     </button>
     
 
-    <!-- Modal -->
+    <!-- Modal add list -->
     <div class="modal fade" id="list-add-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -45,12 +83,13 @@
 
 
     
-  <div class="row justify-content-start">
+  <div class="row justify-content-start"> 
         {% for list in board_lists %} 
           <div class="col-sm-4">
-                <br>
-                  
-                  <ul class="list-group "> <li class="list-group-item list-group-item-dark font-weight-bold ">{{ list }} 
+                  <br>
+
+
+                  <ul id="sortable" data-id="{{list.id}}" class="list-group sort"> <li class="list-group-item list-group-item-dark font-weight-bold ">{{ list }} 
                       <!--  <a class="far fa-edit" href="{% url 'editList' board_id=board.id list_id=list.id %}"></a> -->
 
                         <a style="color:darkblue" class="fas fa-trash-alt float-right mt-1" href="{% url 'deleteList' board_id=board.id list_id=list.id %}"></a>
@@ -86,19 +125,53 @@
                         </div>
                         </div>
 
-                        
-
 
                     </li>
+
+
+
                       {% for card in list_cards %}
-                          {% if card.board_list.id == list.id %}
-                              <li class="list-group-item ">{{ card }} <a style="color: darkblue" class="far fa-trash-alt float-right ml-2" href="{% url 'deleteCard' board_id=board.id list_id=list.id card_id=card.id %}"></a> <a style="color: darkblue" class="far fa-edit float-right" href="{% url 'editCard' board_id=board.id list_id=list.id card_id=card.id %}"></a>  </li>
+                          {% if card.board_list.id == list.id %}{% csrf_token %}
+                              <li id="card-{{ card.id }}" data-action="{% url 'changeCard' board.id list.id card.id %}" class=" list-group-item">{{ card }} <a style="color: darkblue" class="fas fa-archive float-right mt-1 ml-1" href="{% url 'archiveCard' board_id=board.id list_id=list.id card_id=card.id %}"></a> <!-- <a style="color: darkblue" class="far fa-edit float-right" href="{% url 'editCard' board_id=board.id list_id=list.id card_id=card.id %}"></a> -->
+                                
+                                <!-- Button trigger modal edit card-->
+                                <button type="button"
+                                style="color: darkblue" 
+                                class="btn btn-primary border-0 bg bg-transparent far fa-edit float-right"
+                                id="edit-card" 
+                                data-toggle="modal" 
+                                data-remote="{% url 'editCard' board_id=board.id list_id=list.id card_id=card.id %}"
+                                data-target="#card-edit-modal">
+                                
+                                </button>
+
+                                <!-- Modal edit card-->
+                                <div class="modal fade" id="card-edit-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalCenterTitle">Edit Card</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-body">
+                                    
+                                    </div>
+                                    <div class="modal-footer">
+                                    
+                                    </div>
+                                </div>
+                                </div>
+                                </div>
+
+                            </li>
                           {% endif %}
       
                       {% endfor %}
                     
 
-                    <!-- Button trigger modal -->
+                    <!-- Button trigger modal add card-->
                     <button type="button"
                     style="background-color: darkblue" 
                     class="btn btn-primary border-0 bg  p-2"
@@ -109,7 +182,7 @@
                     Add Card
                     </button>
 
-                    <!-- Modal -->
+                    <!-- Modal add card-->
                     <div class="modal fade" id="card-add-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
@@ -129,13 +202,13 @@
                     </div>
                     </div>
 
+                  </ul>
+                  <br>
 
-                  </ul><br>
-
-                  
-                 
+                
         </div>
         {% endfor %}
+
 </div>
   
 

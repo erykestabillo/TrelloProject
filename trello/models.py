@@ -30,6 +30,7 @@ class ListCard(models.Model):
     title = models.CharField(max_length=50)
     date_created = models.DateTimeField(default=timezone.now)
     board_list = models.ForeignKey(BoardList, on_delete=models.CASCADE, null=True)
+    is_archived = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

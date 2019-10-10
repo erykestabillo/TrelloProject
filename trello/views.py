@@ -41,7 +41,7 @@ class AddBoardAjax(TemplateView):
 
     def post(self,request, **kwargs):
         form = self.form(request.POST)
-        import pdb; pdb.set_trace()
+
         if form.is_valid():
             board_form = form.save(commit=False)
             board_form.user = request.user
@@ -98,11 +98,15 @@ class BoardContent(LoginRequiredMixin,TemplateView):
     
     def get(self,request, **kwargs):
         board_id = kwargs.get('board_id')
+        
         board = get_object_or_404(Board,id=board_id)
         board_lists = BoardList.objects.filter(board_id=board_id)        
-        list_cards = ListCard.objects.all()        
-
+        list_cards = ListCard.objects.filter(is_archived=False)
+        
         return render(request,self.template_name, {'board':board,'board_lists':board_lists,'list_cards':list_cards,})
+        
+
+
 
 
 class AddListAjax(TemplateView):
@@ -166,18 +170,44 @@ class EditListAjax(TemplateView):
 
 
 class EditCard(LoginRequiredMixin,TemplateView):
-    template_name = "trello/add_card.html"
+    template_name = "trello/edit_card.html"
     login_url = '/accounts/login/'
-    form = ListForm
+    form = CardForm
 
     def get(self,request,**kwargs):
+        
         card = get_object_or_404(ListCard,id=kwargs.get("card_id"))
+        board = get_object_or_404(Board,id=kwargs.get("board_id"))
+        board_list = get_object_or_404(BoardList,id=kwargs.get("list_id"))
         form = self.form(instance=card)
-        return render(request, self.template_name, {'form':form})
+        return render(request, self.template_name, {'form':form,'board_id':board.id,'list_id':board_list.id,'card_id':card.id})
+
+class EditCardAjax(TemplateView):
+    template_name = "trello/edit_card.html"
+    form = CardForm
+    def post(self,request,**kwargs):
+        
+        card = get_object_or_404(ListCard,id=kwargs.get("card_id"))
+        #board = get_object_or_404(Board,id=kwargs.get("board_id"))
+        form = self.form(request.POST,instance=card)
+        if form.is_valid():
+            board_form = form.save(commit=False)
+            board_form.user = request.user
+            board_form.save()
+            return JsonResponse({})
+        return JsonResponse({}, status=400)
+
+
+class ChangeCard(TemplateView):
+
+    def post(self,request,**kwargs):
+        card = get_object_or_404(ListCard,id=kwargs.get("card_id"))
+        board_list = get_object_or_404(BoardList,id=request.POST.get('id'))
+        card.board_list = board_list
+        card.save()
+        return JsonResponse({}, status=200)
+
     
-
-
-
 
 class AddCard(LoginRequiredMixin,TemplateView):
     template_name = "trello/add_card.html"
@@ -203,7 +233,6 @@ class AddCardAjax(TemplateView):
             board_form.board_list = board_list
             board_form.save()
             return JsonResponse({})
-            import pdb; pdb.set_trace()
         return JsonResponse({}, status=400)
 
 
@@ -214,6 +243,36 @@ class DeleteCard(LoginRequiredMixin,TemplateView):
         board = get_object_or_404(Board,id=kwargs.get("board_id"))
         card.delete()
         
+        return redirect('boardContent', board_id=board.id)
+
+
+class ArchiveCard(LoginRequiredMixin,TemplateView):
+    login_url = '/accounts/login/'
+    def get(self,request,**kwargs):
+        card = get_object_or_404(ListCard,id=kwargs.get("card_id"))
+        board = get_object_or_404(Board,id=kwargs.get("board_id"))
+        card.is_archived = True
+        card.save()
+        return redirect('boardContent', board_id=board.id)
+
+class CardArchives(LoginRequiredMixin,TemplateView):
+    template_name = "trello/archived_cards.html"
+    login_url = '/accounts/login/'
+    def get(self,request,**kwargs):
+        board = get_object_or_404(Board,id=kwargs.get("board_id"))
+        archived_cards = ListCard.objects.filter(is_archived=True)
+
+        return render(request,self.template_name, {'archived_cards':archived_cards,'board_id':board.id})
+    
+        
+
+class RestoreCard(LoginRequiredMixin,TemplateView):
+    login_url = '/accounts/login/'
+    def get(self,request,**kwargs):
+        card = get_object_or_404(ListCard,id=kwargs.get("card_id"))
+        board = get_object_or_404(Board,id=kwargs.get("board_id"))
+        card.is_archived = False
+        card.save()
         return redirect('boardContent', board_id=board.id)
     
 
