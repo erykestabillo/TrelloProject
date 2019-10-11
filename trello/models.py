@@ -2,8 +2,38 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericRelation
 
 # Create your models here.
+
+class Activity(models.Model):
+    ADD_LIST = 'added list'
+    EDIT_LIST = 'edited list'
+    ADD_CARD = 'added card'
+    EDIT_CARD = 'edited card'
+    ARCHIVE_CARD ='archived card'
+    MOVED_CARD ='moved card'
+    ACTIVITY_TYPES = (
+        (ADD_LIST, 'Add List'),
+        (EDIT_LIST, 'Edit List'),
+        (ADD_CARD, 'Add Card'),
+        (EDIT_CARD, 'Edit Card'),
+        (ARCHIVE_CARD, 'Archive Card'),
+        (MOVED_CARD, 'Moved Card')
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    activity_type = models.CharField(max_length=1, choices=ACTIVITY_TYPES)
+    date = models.DateTimeField(auto_now_add=True)
+    
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+
+
+
 class Board(models.Model):
     title = models.CharField(max_length=50)
     date_created = models.DateTimeField(default=timezone.now)
@@ -21,6 +51,8 @@ class BoardList(models.Model):
     title = models.CharField(max_length=50)
     date_created = models.DateTimeField(default=timezone.now)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, null=True)
+    edit_list = GenericRelation(Activity, related_name="cardActivity")
+    add_list = GenericRelation(Activity, related_name="cardActivity", null=True)
 
     def __str__(self):
         return self.title
@@ -28,12 +60,23 @@ class BoardList(models.Model):
 
 class ListCard(models.Model):
     title = models.CharField(max_length=50)
+    description = models.CharField(max_length=200, null=True)
     date_created = models.DateTimeField(default=timezone.now)
     board_list = models.ForeignKey(BoardList, on_delete=models.CASCADE, null=True)
     is_archived = models.BooleanField(default=False)
+    edit_card = GenericRelation(Activity, related_name="cardActivity")
+    add_card = GenericRelation(Activity, related_name="cardActivity", null=True)
+    archive_card = GenericRelation(Activity, related_name="cardActivity")
+    moved_card = GenericRelation(Activity, related_name="cardActivity")
 
     def __str__(self):
         return self.title
+
+
+
+
+   
+
 
 
 

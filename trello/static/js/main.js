@@ -158,8 +158,6 @@ $(document).ready(function () {
       })
 
       $(document).on('submit','#card-add-modal', function(event){
-         
-
          var action = $('#add_card_form').attr('action')
          var add_card_data = $('#add_card_form').serialize()
          var csrf = $('input[name="csrfmiddlewaretoken"]').val()
@@ -173,7 +171,6 @@ $(document).ready(function () {
            }
          }).done(function(response){
             window.location.href ='' 
-            
          }).fail(function(response){
             var error_template = '<ul><li>This Field is required</li></ul>';
             $('.error-add-card').html(error_template)
@@ -185,24 +182,23 @@ $(document).ready(function () {
 
 
       $('#card-edit-modal').on('show.bs.modal', function(event){
-         var remoteUrl = $(event.relatedTarget).data('remote')
-         var modal = $(this)
-         
+         var remoteUrl = $(event.relatedTarget).data('remote');
+         var modal = $(this);
          $.ajax({
             method: 'GET',
             url: remoteUrl
 
          }).done(function(response){
+            modal.find('.modal-body').html(response);
             
-            modal.find('.modal-body').html(response)
          })
       })
 
       $(document).on('submit','#card-edit-modal', function(event){
          
-         var action = $('#edit_card_form').attr('action')
-         var add_card_data = $('#edit_card_form').serialize()
-         var csrf = $('input[name="csrfmiddlewaretoken"]').val()
+         var action = $('#edit_card_form').attr('action');
+         var add_card_data = $('#edit_card_form').serialize();
+         var csrf = $('input[name="csrfmiddlewaretoken"]').val();
 
          event.preventDefault()
          $.ajax({
@@ -214,7 +210,7 @@ $(document).ready(function () {
            }
          }).done(function(response){
             
-            window.location.href = '' 
+            window.location.href = '';
             
          }).fail(function(response){
             var error_template = '<ul><li>This Field is required</li></ul>';
@@ -237,13 +233,14 @@ $(document).ready(function () {
       })
    })
 
+
+
    $(".sort").sortable({
-      connectWith: ".sort",
+      connectWith: ".sort",      
       over: function(event,ui){
          var card_list_id = $(this).data('id')
-         var csrf = $('[name="csrfmiddlewaretoken"]').val()         
+         var csrf = $('[name="csrfmiddlewaretoken"]').val()     
          var action = $(event.toElement).data('action')
-         
          $.ajax({
             method: 'POST',
             url: action,
@@ -252,11 +249,11 @@ $(document).ready(function () {
                'X-CSRFToken':csrf
            }
          }).done(function(response){
-               
+            window.location.href = '';
          })
       }
    })
    
-   $( "#draggable" ).draggable();
+
 
 });

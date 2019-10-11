@@ -1,16 +1,16 @@
 from django.shortcuts import render,redirect
 from django.views.generic import TemplateView
-from .models import Board,BoardList,ListCard
+from .models import Board,BoardList,ListCard,Activity
 from .forms import BoardForm,ListForm,CardForm,UserChangeForm,UserCreationForm
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.utils import timezone
-from .models import Board
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse,reverse_lazy
 from django.views import generic
 from django.http import JsonResponse
 from django.views.generic.base import View
+from django import template
 
 # Create your views here.
 class ViewBoards(LoginRequiredMixin,TemplateView):
@@ -102,8 +102,11 @@ class BoardContent(LoginRequiredMixin,TemplateView):
         board = get_object_or_404(Board,id=board_id)
         board_lists = BoardList.objects.filter(board_id=board_id)        
         list_cards = ListCard.objects.filter(is_archived=False)
-        
-        return render(request,self.template_name, {'board':board,'board_lists':board_lists,'list_cards':list_cards,})
+
+        activities = Activity.objects.filter(user=request.user).order_by('-date')
+
+    
+        return render(request,self.template_name, {'board':board,'board_lists':board_lists,'list_cards':list_cards,'activities':activities,'user':request.user.get_username()})
         
 
 
@@ -150,9 +153,6 @@ class EditList(LoginRequiredMixin,TemplateView):
         return render(request, self.template_name, {'form':form,'list_id':board_list.id,'board_id':board.id})
 
 
-    
-
-
 class EditListAjax(TemplateView):
     template_name = "trello/edit_list.html"
     form = ListForm
@@ -165,6 +165,7 @@ class EditListAjax(TemplateView):
             board_form = form.save(commit=False)
             board_form.board = board
             board_form.save()
+            Activity.objects.create(content_object=board_list, activity_type=Activity.EDIT_LIST, user=request.user)
             return JsonResponse({})
         return JsonResponse({}, status=400)
 
@@ -180,6 +181,7 @@ class EditCard(LoginRequiredMixin,TemplateView):
         board = get_object_or_404(Board,id=kwargs.get("board_id"))
         board_list = get_object_or_404(BoardList,id=kwargs.get("list_id"))
         form = self.form(instance=card)
+        
         return render(request, self.template_name, {'form':form,'board_id':board.id,'list_id':board_list.id,'card_id':card.id})
 
 class EditCardAjax(TemplateView):
@@ -187,15 +189,19 @@ class EditCardAjax(TemplateView):
     form = CardForm
     def post(self,request,**kwargs):
         
-        card = get_object_or_404(ListCard,id=kwargs.get("card_id"))
+        card_object = get_object_or_404(ListCard,id=kwargs.get("card_id"))
         #board = get_object_or_404(Board,id=kwargs.get("board_id"))
-        form = self.form(request.POST,instance=card)
+        form = self.form(request.POST,instance=card_object)
         if form.is_valid():
             board_form = form.save(commit=False)
             board_form.user = request.user
+            Activity.objects.create(content_object=card_object, activity_type=Activity.EDIT_CARD, user=request.user)
             board_form.save()
-            return JsonResponse({})
+            
+            return JsonResponse({'card_object':card_object.edit_card.count()})
         return JsonResponse({}, status=400)
+
+
 
 
 class ChangeCard(TemplateView):
@@ -205,6 +211,7 @@ class ChangeCard(TemplateView):
         board_list = get_object_or_404(BoardList,id=request.POST.get('id'))
         card.board_list = board_list
         card.save()
+        Activity.objects.create(content_object=card, activity_type=Activity.MOVED_CARD, user=request.user)
         return JsonResponse({}, status=200)
 
     
@@ -223,15 +230,15 @@ class AddCard(LoginRequiredMixin,TemplateView):
 class AddCardAjax(TemplateView):
     template_name = "trello/add_card.html"
     form = CardForm
-
     def post(self,request,**kwargs):
         board_list = get_object_or_404(BoardList,id=kwargs.get("list_id"))
+        board = get_object_or_404(Board,id=kwargs.get("board_id"))
         form = self.form(request.POST)
-        
         if form.is_valid():
             board_form = form.save(commit=False)
-            board_form.board_list = board_list
+            board_form.board_list = board_list         
             board_form.save()
+            Activity.objects.create(content_object=board_form, activity_type=Activity.ADD_CARD, user=request.user)
             return JsonResponse({})
         return JsonResponse({}, status=400)
 

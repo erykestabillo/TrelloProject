@@ -17,7 +17,7 @@
                     
                                     {% for field in form %}
                                     <ul id="frms">
-                                              {{ field|as_crispy_field }} {{ field.errors }}
+                                              {{ field }} {{ field.errors }}
                                     </ul>
                                     <p class="error-edit-card"></p>
                     
