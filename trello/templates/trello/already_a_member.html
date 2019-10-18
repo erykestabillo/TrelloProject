@@ -12,22 +12,11 @@
                     <div class="row justify-content-center">
                            
                             <div class="col-sm5">
+                                <h1>{{ board_member.member }} is already a member of board {{ board_member.board }}</h1>
                                 
-                                <form enctype="multipart/form-data" id="add_card_form" action="{% url 'addCardAjax' board_id=board_id list_id=list_id %}" method="POST" novalidate> {% csrf_token %}
-                    
-                                  
-                                    <ul id="frms">
-                                              Title: {{ form.title }} 
-                                    </ul>
-                                    <p class="error-add-card"></p>
-                    
-                                  
-                                    <br><button type="submit" style="background-color: darkblue" class="btn btn-success">Save</button>
-                                </form>
                             </div>
                     </div>
             </div>
-
             
     </body>
 </html>

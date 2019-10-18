@@ -55,10 +55,54 @@
                   </div>
                   </div>
                   </div>
-
-                    <!-- <a class="nav-link" href="{% url 'editBoard' board_id=board.id %}">Edit Board</a> -->
-
                 </li>
+                
+                <li class="nav-item">
+                  <!-- Button trigger modal -->
+                  <button type="button" 
+                  class="btn btn-primary border-0 bg bg-transparent p-2"
+                  id="create-board" 
+                  data-toggle="modal" 
+                  data-remote="{% url 'inviteMember'  board_id=board.id %}"
+                  data-target="#invite-member-modal">
+                  Invite Member
+                  </button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" id="invite-member-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalCenterTitle">Invite Member</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                      </div>
+                      <div class="modal-body">
+                      
+                      </div>
+                      <div class="modal-footer">
+                      
+                      </div>
+                  </div>
+                  </div>
+                  </div>
+                </li>
+
+                <li class="nav-item">
+                  <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle border-0 bg bg-transparent p-2" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Board Members
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          {% for member in board_members %}
+                              <a class="dropdown-item" >{{ member }}</a>
+                          {% endfor %}
+              
+                      </div>
+                    </div>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'deleteBoard' board_id=board.id %}">Delete Board</a>
                 </li>
@@ -73,14 +117,15 @@
           {% endblock %}
           
 
-          <script
-          src="https://code.jquery.com/jquery-3.4.1.min.js"
-          integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-          crossorigin="anonymous">
-          </script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         
+        
+        
+        
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
         <script src="{% static 'js/main.js' %}"></script>
         
         

@@ -1,8 +1,9 @@
-from django.forms import ModelForm
+from django.forms import ModelForm,CharField
 from django import forms
-from .models import Board,BoardList, ListCard
+from .models import Board,BoardList, ListCard,BoardInvite,CardAttatchments,CardCheckList
 from .models import TrelloUser
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+
 
 class BoardForm(ModelForm):
     class Meta:
@@ -17,9 +18,26 @@ class ListForm(ModelForm):
 
 
 class CardForm(ModelForm):
+    description = CharField(required=False)
     class Meta:
         model = ListCard
-        fields = ['title']
+        fields = ['title','description']
+
+class BoardInviteForm(ModelForm):
+    class Meta:
+        model = BoardInvite
+        fields = ['email']
+
+class CardAttatchmentForm(ModelForm):
+    class Meta:
+        model = CardAttatchments
+        fields = ['file']
+
+class CardCheckListForm(ModelForm):
+    
+    class Meta:
+        model = CardCheckList
+        fields = ['checklist']
 
 
 
@@ -45,8 +63,11 @@ class UserCreationForm(ModelForm):
         # Save the provided password in hashed format
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+       
+        
         if commit:
             user.save()
+            
         return user
 
 class UserChangeForm(ModelForm):

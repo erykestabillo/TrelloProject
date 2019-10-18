@@ -64,14 +64,25 @@
   
         <div class="container">
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-4">
 
                     <ul class="list-group "> <h1>Boards</h1>
                         {% for board in boards %}
-                        <li class="list-group-item"><a href="{% url 'boardContent' board_id=board.id %}">{{ board }}</a></li>
+                        <li class="list-group-item"><a href="{% url 'boardContent' board_id=board.id member_id=user.id%}">{{ board }}</a></li>
                         {% endfor %}
                         <!-- <a class="list-group-item" href="{% url 'addBoard' %}">Add Board</a> -->
                     </ul>
+
+                    <ul class="list-group "> <h1>Member Boards</h1>
+          
+                        {% for board_member in member_boards %}             
+                 
+                              <li class="list-group-item"><a href="{% url 'boardContent' board_id=board_member.board_id member_id=board_member.member_id%}">{{ board_member.board }}</a></li>                     
+                   
+                        {% endfor %}
+               
+                      <!-- <a class="list-group-item" href="{% url 'addBoard' %}">Add Board</a> -->
+                  </ul>
 
                 </div>
             </div>

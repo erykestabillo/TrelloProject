@@ -3,6 +3,7 @@
 {% block content %}
 {% load static %}
 
+
 <!-- Button trigger modal -->
 <br><br>
 <button type="button"
@@ -36,14 +37,21 @@ Archived Cards
 </div>
 </div>
 <br>
+<div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle float-right mr-4 " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Activity Log
+        </button>
+        <div class="dropdown-menu" style="max-height: 300px;" aria-labelledby="dropdownMenuButton">
+                {% for activity in activities %}
+     
+                <li class="list-group-item">{{activity.user}} {{ activity.activity_type }} {{ activity.content_object }} <br>{{ activity.date|timesince }} ago</li>
+                
+        {% endfor %}
 
-<button type="button" class="btn btn-secondary float-right" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Vivamus
-sagittis lacus vel augue laoreet rutrum faucibus.">
-  Activity Log
-</button>
+        </div>
+</div>
 
-
-
+        
 
 <div class="container">
     
@@ -132,29 +140,44 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
                       </li>
                   <ul id="sortable" data-id="{{list.id}}" class="list-group sort"> 
 
-
-
                       {% for card in list_cards %}
                           {% if card.board_list.id == list.id %}{% csrf_token %}
-                              <li id="card-{{ card.id }}" data-action="{% url 'changeCard' board.id list.id card.id %}" class=" list-group-item">{{ card }} <a style="color: darkblue" class="fas fa-archive float-right mt-1 ml-1" href="{% url 'archiveCard' board_id=board.id list_id=list.id card_id=card.id %}"></a> <!-- <a style="color: darkblue" class="far fa-edit float-right" href="{% url 'editCard' board_id=board.id list_id=list.id card_id=card.id %}"></a> -->
+                              <li id="card-{{ card.id }}"  class=" list-group-item sort-item">
+                                <!-- Button trigger modal view card-->
+                                <a 
+                                style="color: black; width: 70%" 
+                                class="btn btn-primary border-0 bg bg-transparent"
+                                id="view-card" 
+                                data-toggle="modal" 
+                                data-remote="{% url 'viewCard' board_id=board.id list_id=list.id card_id=card.id %}"
+                                data-target="#view-card-modal"
+                                data-action="{% url 'changeCard' board_id=board.id list_id=list.id card_id=card.id %}">
                                 
+                                {{ card }} 
+                              </a>
+                                
+            
+
+
                                 <!-- Button trigger modal edit card-->
                                 <button type="button"
                                 style="color: darkblue" 
-                                class="btn btn-primary border-0 bg bg-transparent far fa-edit float-right"
+                                class="btn btn-primary border-0 rounded-circle bg bg-transparent far fa-edit"
                                 id="edit-card" 
                                 data-toggle="modal" 
                                 data-remote="{% url 'editCard' board_id=board.id list_id=list.id card_id=card.id %}"
                                 data-target="#card-edit-modal">
-                                
                                 </button>
+                                
+                                <a   href="{% url 'archiveCard' board_id=board.id list_id=list.id card_id=card.id %}" style="color: darkblue" class="far fa-file-archive btn btn-primary rounded-circle border-0 bg bg-transparent "></a>
+                            </li>
 
-                                <!-- Modal edit card-->
-                                <div class="modal fade" id="card-edit-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
+                            <!-- Modal view card-->
+                            <div class="modal fade" id="view-card-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalCenterTitle">Edit Card</h5>
+                                        <h5 class="modal-title" id="exampleModalCenterTitle">Card</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -168,13 +191,10 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
                                 </div>
                                 </div>
                                 </div>
-
-                            </li>
                           {% endif %}
       
                       {% endfor %}
                     
-
                     <!-- Button trigger modal add card-->
                     
 
@@ -209,6 +229,13 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
                         </div>
                         </div>
                         </div>
+            </button>
+
+                                
+                                
+                                
+
+                                
                   </li>
                   <br>
 
@@ -218,26 +245,29 @@ sagittis lacus vel augue laoreet rutrum faucibus.">
 
 </div>
 
-<div class="container">
-    <div class="row justify-content-start"> 
-        <div class="overflow-auto col-sm-5"> 
-            <ul style="max-height: 300px; "class=" list-group">
-                {% for activity in activities %}
-     
-                        <li class="list-group-item">{{user}} {{ activity.activity_type }} {{ activity.content_object }} <br>{{ activity.date|timesince }} ago</li>
-                        
-                {% endfor %}
-            </ul>
+<!-- Modal edit card-->
+<div class="modal fade" id="card-edit-modal" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Edit Card</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
         </div>
-      
-
-    </div>
-</div>
-
-
+        <div class="modal-body">
         
+        </div>
+        <div class="modal-footer">
+        
+        </div>
+    </div>
+    </div>
+    </div>
 
-
+  
+      
+      
 
 
 {% endblock %}

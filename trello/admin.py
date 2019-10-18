@@ -5,7 +5,9 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .forms import UserChangeForm,UserCreationForm
-
+from django.contrib.auth.models import Permission
+from django.contrib import admin
+admin.site.register(Permission)
 
 
 

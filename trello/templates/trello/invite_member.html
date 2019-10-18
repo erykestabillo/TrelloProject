@@ -13,21 +13,20 @@
                            
                             <div class="col-sm5">
                                 
-                                <form enctype="multipart/form-data" id="add_card_form" action="{% url 'addCardAjax' board_id=board_id list_id=list_id %}" method="POST" novalidate> {% csrf_token %}
+                                <form id="invite-member-form" action="{% url 'inviteMemberAjax' board_id=board_id %}" enctype="multipart/form-data" method="POST" novalidate> {% csrf_token %}
                     
-                                  
+                                    {% for field in form %}
                                     <ul id="frms">
-                                              Title: {{ form.title }} 
+                                            {{ field|as_crispy_field }} {{ field.errors }}
                                     </ul>
-                                    <p class="error-add-card"></p>
-                    
-                                  
-                                    <br><button type="submit" style="background-color: darkblue" class="btn btn-success">Save</button>
+                                    <p class="error-add-board"></p>
+                                    {% endfor %}
+
+                                    <br><button type="submit" style="background-color: darkblue" class="btn btn-success">Send</button>
                                 </form>
                             </div>
                     </div>
             </div>
-
             
     </body>
 </html>
